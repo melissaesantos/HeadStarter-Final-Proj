@@ -23,6 +23,7 @@ Here are the key points you should follow while interacting:
 Your goal is to ensure a positive experience for everyone who interacts with you, helping them find the information they need as quickly and efficiently as possible.
 `;
 
+const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
