@@ -2,7 +2,6 @@
 
 import { Box, TextField, Button } from "@mui/material";  // Importing Box component from MUI (Material-UI) for layout
 import { Stack } from "@mui/system";  // Importing Stack component from MUI system for flexible layout
-import Image from "next/image";  // Importing Next.js Image component for optimized image handling
 import { useState } from "react";  // Importing useState hook from React for managing state
 
 export default function Home() {
@@ -14,6 +13,58 @@ export default function Home() {
 
   // useState hook to manage the current message being typed by the user
   const [message, setMessage] = useState('');
+
+  // Helper function to send our message to the backend and generate a response 
+  const sendMessage = async () => {
+    if (message.trim() === '') return;  // Don't send empty messages
+
+    // Update state to add user's message and a placeholder for the assistant's response
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { role: 'user', content: message },
+      { role: 'assistant', content: '' },
+    ]);
+
+    setMessage('');  // Clear the input field
+
+    // Send the message to the backend
+    const response = await fetch('/api/chat', {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify([...messages, { role: 'user', content: message }]),
+    });
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    let result = '';
+    const processText = async ({ done, value }) => {
+      if (done) {
+        return result;
+      }
+
+      const text = decoder.decode(value || new Int8Array(), { stream: true });
+      result += text;
+
+      setMessages((prevMessages) => {
+        const otherMessages = prevMessages.slice(0, -1);
+        let lastMessage = prevMessages[prevMessages.length - 1];
+        return [
+          ...otherMessages,
+          {
+            ...lastMessage,
+            content: lastMessage.content + text,
+          },
+        ];
+      });
+
+      return reader.read().then(processText);
+    };
+
+    reader.read().then(processText);
+  };
 
   return (
     // Box component for the overall layout, taking up the full viewport width and height
@@ -67,15 +118,16 @@ export default function Home() {
             </Box>
           ))}
         </Stack>
-          <Stack direction = 'row' spacing = {2}>
-            <TextField
-            label = "message"
+        <Stack direction="row" spacing={2}>
+          <TextField
+            label="Message"
             fullWidth
-            value = {message}
-            onChange={(e) => setMessage(e.target.value)}/> 
-
-            <Button variant = "contained ">send</Button>
-          </Stack>
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}  // Send message on Enter key press
+          /> 
+          <Button variant="contained" onClick={sendMessage}>Send</Button>  {/* Trigger sendMessage on button click */}
+        </Stack>
       </Stack>
     </Box>
   );
