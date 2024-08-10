@@ -23,48 +23,62 @@ Here are the key points you should follow while interacting:
 Your goal is to ensure a positive experience for everyone who interacts with you, helping them find the information they need as quickly and efficiently as possible.
 `;
 
+    apiKey: process.env.OPENAI_API_KEY
+});
 
-export async function POST(req){
-    const openai = new OpenAI
-    //this gets the JSON data from your request
-    const data = await req.json()
-    //this is track complettion from our request
-    const completion = await openai.chat.completions.create({
-        //await allows it so that multiple requests can be sent at the same time 
-        message: [{
-            role: 'system',
-            content: systemPrompt
-        },
-        ...data,
-    ],
-    model:  'gpt-4o-mini',
-    stream: true,
-  })
+async function createCompletion(data) {
+    try {
+        const completion = await openai.chat.completions.create({
+            messages: [
+                { role: 'system', content: systemPrompt },
+                ...data,
+            ],
+            model: 'gpt-3.5',
+            stream: true,
+        });
 
+        return completion;
+    } catch (error) {
+        if (error.code === 'rate_limit_exceeded') {
+            console.warn("Rate limit exceeded. Retrying in 5 seconds...");
+            await new Promise(res => setTimeout(res, 5000));
+            return createCompletion(data);  // Retry the request
+        } else {
+            throw error;
+        }
+    }
+}
 
+export async function POST(req) {
+    try {
+        const data = await req.json();
+        const completion = await createCompletion(data);
 
-  const stream = new ReadableStream({
-    async start(controller){
-        const encoder = new TextEncoder()//converts it into bytes/integer arrays
-        try{
-            //this waits for every chunck that the completion says 
-            for await(const chunk of completion){
-                const content = chunk.choices[0]?.delta?.content 
-                if(content){
-                    const text = encoder.encode(content)
-                    controller.enqueue(text)
+        const stream = new ReadableStream({
+            async start(controller) {
+                const encoder = new TextEncoder();
+
+                try {
+                    for await (const chunk of completion) {
+                        const content = chunk.choices[0]?.delta?.content;
+                        if (content) {
+                            const text = encoder.encode(content);
+                            controller.enqueue(text);
+                        }
+                    }
+                } catch (err) {
+                    controller.error(err);
+                } finally {
+                    controller.close();
                 }
             }
+        });
 
+        return new NextResponse(stream);
 
-        } catch(error){
-            controller.error(err)
-         } finally {
-            controller.close()
-         }
+    } catch (error) {
+        console.error('An error occurred:', error);
+        return new NextResponse("An internal error occurred. Please try again later.", { status: 500 });
     }
-   
-    
-  })
-  return  new NextResponse(stream)
 }
+ 
