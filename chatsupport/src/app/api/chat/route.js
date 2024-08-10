@@ -22,3 +22,21 @@ Here are the key points you should follow while interacting:
 
 Your goal is to ensure a positive experience for everyone who interacts with you, helping them find the information they need as quickly and efficiently as possible.
 `;
+
+
+export async function POST(req){
+    const openai = new OpenAI
+    //this gets the JSON data from your request
+    const data = await req.json()
+    //this is track complettion from our request
+    const completion = await openai.chat.completions.create({
+        //await allows it so that multiple requests can be sent at the same time 
+        message: [{
+            role: 'system',
+            content: systemPrompt
+        },
+        ...data,
+    ]
+  })
+
+}
