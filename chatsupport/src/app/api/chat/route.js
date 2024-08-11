@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+
+// Access environment variables
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const YOUR_SITE_URL = process.env.YOUR_SITE_URL || 'https://example.com';
+const YOUR_SITE_NAME = process.env.YOUR_SITE_NAME || 'MySite';
 
 const systemPrompt = `
 You are a helpful, knowledgeable, and friendly customer support bot for the University of California, San Diego (UCSD). Your primary role is to assist students, faculty, staff, and prospective students with questions related to the university, including admissions, course registration, campus facilities, academic programs, financial aid, and student services.
@@ -23,24 +27,47 @@ Here are the key points you should follow while interacting:
 Your goal is to ensure a positive experience for everyone who interacts with you, helping them find the information they need as quickly and efficiently as possible.
 `;
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-});
-
+// Helper function to send a request to LLaMA API
 async function createCompletion(data) {
     try {
-        const completion = await openai.chat.completions.create({
-            messages: [
-                { role: 'system', content: systemPrompt },
-                ...data,
-            ],
-            model: 'gpt-3.5',
-            stream: true,
+        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+                
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "model": "meta-llama/llama-3.1-8b-instruct:free",
+                "messages": [
+                    { "role": "system", "content": systemPrompt },
+                    ...data
+                ]
+            })
         });
 
-        return completion;
+        if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        let result = '';
+        const processText = async ({ done, value }) => {
+            if (done) {
+                return result;
+            }
+
+            const text = decoder.decode(value || new Uint8Array(), { stream: true });
+            result += text;
+
+            return reader.read().then(processText);
+        };
+
+        return reader.read().then(processText);
     } catch (error) {
-        if (error.code === 'rate_limit_exceeded') {
+        if (error.message.includes('rate limit')) {
             console.warn("Rate limit exceeded. Retrying in 5 seconds...");
             await new Promise(res => setTimeout(res, 5000));
             return createCompletion(data);  // Retry the request
@@ -60,13 +87,7 @@ export async function POST(req) {
                 const encoder = new TextEncoder();
 
                 try {
-                    for await (const chunk of completion) {
-                        const content = chunk.choices[0]?.delta?.content;
-                        if (content) {
-                            const text = encoder.encode(content);
-                            controller.enqueue(text);
-                        }
-                    }
+                    controller.enqueue(encoder.encode(completion));
                 } catch (err) {
                     controller.error(err);
                 } finally {
@@ -82,4 +103,3 @@ export async function POST(req) {
         return new NextResponse("An internal error occurred. Please try again later.", { status: 500 });
     }
 }
- 
