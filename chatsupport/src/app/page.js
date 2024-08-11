@@ -139,7 +139,7 @@ export default function Home() {
             onChange={(e) => setMessage(e.target.value)} // Update message state on input change
             onKeyPress={(e) => e.key === 'Enter' && sendMessage()} // Send message on Enter key press
           />
-          <Button variant="contained" onClick={sendMessage}>Send</Button> {/* Trigger sendMessage on button click */}
+          <Button sx = {{backgroundColor: '#FEDD56', '&:hover':{backgroundColor: '#FEF3C7'} }}variant="contained" onClick={sendMessage }>Send</Button> {/* Trigger sendMessage on button click */}
         </Stack>
       </Stack>
     </Box>
