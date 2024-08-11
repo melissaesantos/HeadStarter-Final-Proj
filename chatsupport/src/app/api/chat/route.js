@@ -50,22 +50,10 @@ async function createCompletion(data) {
             throw new Error(`Error: ${response.statusText}`);
         }
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
+        const responseData = await response.json();
+        const content = responseData.choices[0]?.message?.content || 'No response content';
+        return content;
 
-        let result = '';
-        const processText = async ({ done, value }) => {
-            if (done) {
-                return result;
-            }
-
-            const text = decoder.decode(value || new Uint8Array(), { stream: true });
-            result += text;
-
-            return reader.read().then(processText);
-        };
-
-        return reader.read().then(processText);
     } catch (error) {
         if (error.message.includes('rate limit')) {
             console.warn("Rate limit exceeded. Retrying in 5 seconds...");
@@ -80,14 +68,14 @@ async function createCompletion(data) {
 export async function POST(req) {
     try {
         const data = await req.json();
-        const completion = await createCompletion(data);
+        const messageContent = await createCompletion(data);
 
         const stream = new ReadableStream({
             async start(controller) {
                 const encoder = new TextEncoder();
 
                 try {
-                    controller.enqueue(encoder.encode(completion));
+                    controller.enqueue(encoder.encode(messageContent));
                 } catch (err) {
                     controller.error(err);
                 } finally {

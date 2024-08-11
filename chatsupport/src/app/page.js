@@ -1,12 +1,11 @@
 'use client'; // Directive to use React's client-side rendering
 
-import { Box, TextField, Button, Typography, AppBar, Toolbar } from "@mui/material"; // Importing necessary components from MUI
-import { Stack } from "@mui/system"; // Importing Stack component from MUI system for flexible layout
-import { useState } from "react"; // Importing useState hook from React for managing state
-import Image from 'next/image'; // Importing Image component to add the Triton image
+import { Box, TextField, Button, Typography, AppBar, Toolbar } from "@mui/material"; // Importing MUI components
+import { Stack } from "@mui/system"; // Importing Stack component for layout
+import { useState } from "react"; // Importing useState hook for state management
 
 export default function Home() {
-  // useState hook to manage an array of messages
+  // useState hook to manage the array of messages
   const [messages, setMessages] = useState([{
     role: 'assistant',
     content: 'Hi, I am King Triton, here to help you navigate the seas of UC San Diego. How can I assist you today?'
@@ -68,7 +67,6 @@ export default function Home() {
   };
 
   return (
-    // Box component for the overall layout, taking up the full viewport width and height
     <Box
       width="100vw" // Full width of the viewport
       height="100vh" // Full height of the viewport
@@ -76,19 +74,17 @@ export default function Home() {
       flexDirection="column" // Align children in a column
       justifyContent="center" // Center content vertically
       alignItems="center" // Center content horizontally
-      sx = {{backgroundColor: '#F0FFFF'}}
+      sx={{ backgroundColor: '#F0FFFF' }} // Background color
     >
       {/* AppBar for the banner */}
-      <AppBar   position="relative" sx={{ width :"600px" ,backgroundColor: 'gold' }}> {/* Set the background color to gold */}
-        <Toolbar  sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Typography variant="h6" color="black" justifyContent={'center'} > {/* Set text color to black */}
+      <AppBar position="relative" sx={{ width: "600px", backgroundColor: 'gold' }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant="h6" color="black" justifyContent={'center'}>
             UCSD Triton Chatbot
           </Typography>
-         
         </Toolbar>
       </AppBar>
-      {/*THIS IS THE CHAT AREA */}
-      {/* Stack component to stack the main content vertically */}
+      {/* Chat Area */}
       <Stack
         direction="column" // Stack items in a column
         width="600px" // Set a fixed width for the chat container
@@ -96,38 +92,35 @@ export default function Home() {
         border="1px solid black" // Add a black border around the chat container
         p={2} // Add padding inside the chat container
         spacing={3} // Add spacing between items in the stack
-        sx={{ 
-          backgroundColor: '#ffffff',  // Background color for the chat container (e.g., white)
+        sx={{
+          backgroundColor: '#ffffff', // Background color for the chat container
           borderRadius: 2,
-          boxShadow: 3 // Optional: add a shadow to make it stand out
-        }}  
+          boxShadow: 3 // Optional: add a shadow
+        }}
       >
-        {/* Stack component to stack messages vertically */}
         <Stack
           direction="column" // Stack messages in a column
           spacing={2} // Add spacing between messages
-          flexGrow={1} // Allow the stack to grow and fill available space
+          flexGrow={1} // Allow the stack to grow
           overflow="auto" // Enable scrolling if content overflows
-          maxHeight="100%" // Limit the height to the parent's height
+          maxHeight="100%" // Limit the height
         >
-          {/* Map over the messages array and render each message */}
           {messages.map((message, index) => (
             <Box
               key={index} // Unique key for each message
               display="flex" // Display as a flex container
               justifyContent={
                 message.role === 'assistant' ? 'flex-start' : 'flex-end'
-              } // Align messages based on the role (assistant or user)
+              }
             >
-              {/* Box component for individual message bubble */}
               <Box
                 bgcolor={
                   message.role === 'assistant'
-                    ? 'darkblue' // Set background color for assistant messages to dark blue
-                    : 'gold' // Set background color for user messages to gold
+                    ? 'darkblue' // Background color for assistant messages
+                    : 'gold' // Background color for user messages
                 }
                 color="white" // Text color
-                borderRadius={16} // Rounded corners for the message bubble
+                borderRadius={16} // Rounded corners
                 p={3} // Padding inside the message bubble
               >
                 {message.content}
@@ -144,7 +137,13 @@ export default function Home() {
             onChange={(e) => setMessage(e.target.value)} // Update message state on input change
             onKeyPress={(e) => e.key === 'Enter' && sendMessage()} // Send message on Enter key press
           />
-          <Button sx = {{backgroundColor: '#FEDD56', '&:hover':{backgroundColor: '#FEF3C7'} }}variant="contained" onClick={sendMessage }>Send</Button> {/* Trigger sendMessage on button click */}
+          <Button
+            sx={{ backgroundColor: '#FEDD56', '&:hover': { backgroundColor: '#FEF3C7' } }}
+            variant="contained"
+            onClick={sendMessage} // Trigger sendMessage on button click
+          >
+            Send
+          </Button>
         </Stack>
       </Stack>
     </Box>
