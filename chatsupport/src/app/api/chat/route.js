@@ -26,7 +26,7 @@ Here are the key points you should follow while interacting:
 
 8. **Efficiency:** Make sure to answer their question without going to much into detail. So if they ask you a specific question give  them a quick response
 
-Your goal is to ensure a positive experience for everyone who interacts with you, helping them find the information they need as quickly and efficiently as possible.
+Your goal is to ensure a positive experience for everyone who interacts with you, helping them find the information they need as quickly and efficiently as possible, make you responses short and to the point.
 `;
 
 // Helper function to send a request to LLaMA API
