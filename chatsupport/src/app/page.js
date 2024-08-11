@@ -87,7 +87,7 @@ export default function Home() {
          
         </Toolbar>
       </AppBar>
-
+      {/*THIS IS THE CHAT AREA */}
       {/* Stack component to stack the main content vertically */}
       <Stack
         direction="column" // Stack items in a column
@@ -96,6 +96,11 @@ export default function Home() {
         border="1px solid black" // Add a black border around the chat container
         p={2} // Add padding inside the chat container
         spacing={3} // Add spacing between items in the stack
+        sx={{ 
+          backgroundColor: '#ffffff',  // Background color for the chat container (e.g., white)
+          borderRadius: 2,
+          boxShadow: 3 // Optional: add a shadow to make it stand out
+        }}  
       >
         {/* Stack component to stack messages vertically */}
         <Stack
