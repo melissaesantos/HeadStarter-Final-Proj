@@ -76,6 +76,7 @@ export default function Home() {
       flexDirection="column" // Align children in a column
       justifyContent="center" // Center content vertically
       alignItems="center" // Center content horizontally
+      sx = {{backgroundColor: '#F0FFFF'}}
     >
       {/* AppBar for the banner */}
       <AppBar   position="relative" sx={{ width :"600px" ,backgroundColor: 'gold' }}> {/* Set the background color to gold */}
