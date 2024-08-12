@@ -43,7 +43,7 @@ const SigninPage = () => {
         event.preventDefault();
         try {
             await signIn(email, password);
-            router.push('/c');
+            router.push('/chatbot');
         } catch (error) {
             let errorMessage = 'An error occurred. Please try again.';
             switch (error.code) {
