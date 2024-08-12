@@ -11,7 +11,9 @@
   "dependencies": {
     "@mui/material": "^5.16.7",
     "@mui/system": "^5.16.7",
+    "firebase": "^10.12.5",
     "next": "14.2.5",
+    "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18"
   },
