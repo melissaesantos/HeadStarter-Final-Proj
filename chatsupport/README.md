@@ -1,3 +1,36 @@
+# UCSD Triton Chatbot
+
+Welcome to the UCSD Triton Chatbot! This chatbot is designed to help students and visitors with common queries related to UC San Diego, such as admissions, course registration, campus facilities, and student services.
+
+## Table of Contents
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Setup Instructions](#setup-instructions)
+- [How to Use](#how-to-use)
+- [Future Improvements](#future-improvements)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Features
+- Real-time chatbot for UCSD-related queries.
+- Smooth animations for a better user experience.
+- User and assistant (bot) messages with distinct styles for easy distinction.
+- Integrated with OpenRouter for API-based chat generation.
+- Deployed with Next.js for a fast and scalable web app.
+
+## Tech Stack
+- **Frontend**: Next.js, React.js, Material-UI (MUI)
+- **Backend**: Node.js, OpenRouter API
+- **Database**: None (Currently uses APIs for dynamic responses)
+- **Hosting**: AWS (EC2 instance) or any preferred cloud service
+
+## Setup Instructions
+
+### Prerequisites
+- Node.js (v16 or higher)
+- NPM or Yarn
+- OpenRouter API key
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
