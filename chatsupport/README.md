@@ -22,7 +22,7 @@ Welcome to the UCSD Triton Chatbot! This chatbot is designed to help students an
 - **Frontend**: Next.js, React.js, Material-UI (MUI)
 - **Backend**: Node.js, OpenRouter API
 - **Database**: None (Currently uses APIs for dynamic responses)
-- **Hosting**: AWS (EC2 instance) or any preferred cloud service
+
 
 ## Setup Instructions
 
